@@ -17,10 +17,10 @@
     "babel-loader": "^8.0.6"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html --port 8080",
     "start:jsx": "parcel JSX/index.html --open",
-    "start:virtual": "parcel virtual/index.html --open"
+    "start:virtual": "parcel virtual/index.html --open",
+    "test": "parcel index.test.html --open"
   },
   "keywords": [],
   "author": "cjd <459953103@qq.com> (http://github.com/GloomySunday28)",

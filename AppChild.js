@@ -2,7 +2,7 @@ import React, {Component} from './React'
 
 class AppChild extends Component {
   componentWillMount() {
-    // console.log('componentWillMount, child')
+    console.log('componentWillMount, child')
     this.state = {
       b: 100
     }

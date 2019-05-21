@@ -103,6 +103,7 @@ function renderComponent(component) {
   //   component.base.parentNode.replaceChild( base, component.base ) // setState或者更改props的时候触发
   // }
   component.base = base
+  base._component = component
 }
 
 export {renderComponent}
