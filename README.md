@@ -8,5 +8,5 @@
 
 - [x] JSX和虚拟DOM :wink:
 - [x] 生命周期和render :wink:
-- [] diff算法 :cry:
-- [] 异步的setState :cry:
+- [ ] diff算法 :cry:
+- [ ] 异步的setState :cry:
