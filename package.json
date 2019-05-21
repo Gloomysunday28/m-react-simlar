@@ -1,0 +1,28 @@
+{
+  "name": "ReactSimulation",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "_esutils@2.0.2@esutils": "^2.0.2",
+    "_lodash@4.17.11@lodash": "^4.17.11",
+    "_to-fast-properties@2.0.0@to-fast-properties": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/helper-builder-react-jsx": "^7.3.0",
+    "@babel/plugin-syntax-jsx": "^7.2.0",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-env": "^7.4.4",
+    "babel-loader": "^8.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html --port 8080",
+    "start:jsx": "parcel JSX/index.html --open",
+    "start:virtual": "parcel virtual/index.html --open"
+  },
+  "keywords": [],
+  "author": "cjd <459953103@qq.com> (http://github.com/GloomySunday28)",
+  "license": "MIT"
+}
