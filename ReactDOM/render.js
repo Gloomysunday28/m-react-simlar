@@ -1,10 +1,14 @@
 import { Component } from "../React";
+import diff from '../Diff/Diff'
 
 const render = function (virtual, container) { // 只做appendChild操作
-  return container.appendChild(_render(virtual))
+  const renderDOM = _render(virtual)
+  if (renderDOM) container.appendChild(renderDOM)
+  return container
 }
 
-const _render = function(virtual) { // 用来处理各种转化真实DOM
+const _render = function(virtual) { // 用来处理各种转化真实DOM\
+  if (!virtual) return
   if (typeof virtual === 'number') virtual = String(virtual)
   if (typeof virtual === 'string') {
     const virtualStr = document.createTextNode(virtual)
@@ -12,8 +16,8 @@ const _render = function(virtual) { // 用来处理各种转化真实DOM
   }
   if (typeof virtual.tag === 'function') {
     let component = createComponent(virtual.tag, virtual.attrs)
-    setComponentProps(component, virtual.attrs)
-    return component.base
+    setComponentProps(component, virtual.attrs) // props是在state之前赋值的
+    return component.base // base为挂载的DOM
   } else {
     virtual = (typeof virtual.tag === 'object' ?  virtual.tag : virtual) // 判断组件还是原生DOM
   }
@@ -67,14 +71,14 @@ function createComponent(component, props) { // 创建非JSX的class 或者 无�
       return this.constructor(props)
     }
   }
-  return inst
+  return inst // 为什么不返回render出来的JSX呢, 因为每次修改后都需要重新渲染, 也就是重新执行render函数
 }
 
 function setComponentProps(component, props) { // 设置props
   if (!component.base) {
-    if (component.comopnentWillMount) component.componentWillMount();
+    if (component.componentWillMount) component.componentWillMount();
   } else if (component.componentWillReceiveProps) {
-    component.componentWillReceiveProps( props )
+    component.componentWillReceiveProps(props)
   }
  
   component.props = props
@@ -87,15 +91,17 @@ function renderComponent(component) {
   if (component.base && component.componentWillUpdate) {
     component.componentWillUpdate()
   }
-  base = _render(component.render()) // 转化后的真实DOM
-
+  if (component.base) {
+    base = diff(component.render(), component.base) // 进行同级DOM对比, 因为很少出现跨级DOM更改
+  } else {
+    base = _render(component.render()) // 转化后的真实DOM, 子组件的props也会跟着state的值更改掉, 因为里面又重新执行了子组件的setComponentProps
+  }
   if (!component.base) component.componentDidMount && component.componentDidMount()
   else component.componentDidUpdate && component.componentDidUpdate()
 
-  if ( component.base && component.base.parentNode ) {
-    component.base.parentNode.replaceChild( base, component.base ) // setState或者更改props的时候触发
-  }
-
+  // if ( component.base && component.base.parentNode ) {
+  //   component.base.parentNode.replaceChild( base, component.base ) // setState或者更改props的时候触发
+  // }
   component.base = base
 }
 

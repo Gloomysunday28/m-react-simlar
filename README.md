@@ -13,3 +13,10 @@
 - [x] 生命周期和render :wink:
 - [ ] diff算法 :cry:
 - [ ] 异步的setState :cry:
+
+## JSX loader解析
+类型 | 解析
+:---:| :---:
+文本 | 文本
+JSX  | {tag: tagName, attrs: {}, children:[]}
+组件 | function() {return {tag: tagName, attrs: {}, children:[]}}
