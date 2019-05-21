@@ -2,8 +2,17 @@ import { Component } from "../React";
 import diff from '../Diff/Diff'
 
 const render = function (virtual, container) { // 只做appendChild操作
-  const renderDOM = _render(virtual)
-  if (renderDOM) container.appendChild(renderDOM)
+  let renderDOM = _render(virtual)
+  console.log(renderDOM)
+  if (renderDOM) {
+    if (Array.isArray(renderDOM)) {
+      console.log(renderDOM);
+      // renderDOM.map(container.appendChild)
+    } else {
+      container.appendChild(renderDOM)
+    }
+    // [...renderDOM].map(container.appendChild)
+  }
   return container
 }
 
@@ -21,6 +30,16 @@ const _render = function(virtual) { // 用来处理各种转化真实DOM\
   } else {
     virtual = (typeof virtual.tag === 'object' ?  virtual.tag : virtual) // 判断组件还是原生DOM
   }
+  if (Array.isArray(virtual)) {
+    return virtual.map(vn => {
+      return renderElement(vn)
+    })
+  } else {
+    return renderElement(virtual)
+  }
+}
+
+function renderElement(virtual) {
   const dom = document.createElement(virtual.tag)
   const fragement = document.createDocumentFragment() // 优化性能
   if (virtual.attrs) {
@@ -92,6 +111,7 @@ function renderComponent(component) {
     component.componentWillUpdate()
   }
   if (component.base) {
+    console.log(component.base)
     base = diff(component.render(), component.base) // 进行同级DOM对比, 因为很少出现跨级DOM更改
   } else {
     base = _render(component.render()) // 转化后的真实DOM, 子组件的props也会跟着state的值更改掉, 因为里面又重新执行了子组件的setComponentProps

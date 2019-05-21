@@ -15,7 +15,7 @@ const isSameNodeType = function (vnode, dom) {
   }
 }
 
-const diffTextNode = function (vnode, dom) {
+const diffTextNode = function (vnode, dom) { // 比对文本节点
   if (dom && dom.nodeType === 3) { // 如果原来文本节点
     if (dom.textContent !== vnode) {
       dom.textContent = vnode
@@ -29,10 +29,13 @@ const diffTextNode = function (vnode, dom) {
   return dom
 }
 
-const diffElementNode = function (vnode, dom) {
+const diffElementNode = function (vnode, dom) { // 比对Element
+  console.log(dom)
   const childNodes = [...Array.from(dom.childNodes)] // 转化类数组为数组
   const tagName = dom.tagName.toLowerCase()
-
+  if (typeof vnode.tag === 'function') {
+    return
+  }
   if (vnode.tag === tagName) {
     diffAttribute(vnode.attrs, dom)
     if (vnode.children) {
@@ -64,21 +67,18 @@ const diffAttribute = function (attrs = {}, dom) { // attrs是修改后的, Dom�
       dom.setAttribute(attr.name, '')
     }
   })
-  Object.keys(attrs).forEach(key => { // 现在有属性, 则对比之前的DOM
+  Object.keys(attrs || {}).forEach(key => { // 现在有属性, 则对比之前的DOM
     const value = attrs[key]
     if (key === 'className') key = 'class'
     if (key === 'htmlFor') key = 'for'
     const domAttr = dom.getAttribute(key)
-    console.log(value)
-    console.log(key)
-    console.log(dom)
     if (!/^on\w+/.test(key) && ((domAttr && domAttr !== value) || !domAttr)) { // 如果有该属性, 但是值却不一样, 或者没有该属性, 则设置该属性
       dom.setAttribute(key, value)
     }
   })
 }
 
-const diffChildren = function (dom, vChildren) {
+const diffChildren = function (dom, vChildren) { // 比对子节点
   const domChildren = dom.childNodes
   let keys = {} // 区分有key和没有key的DOM
   let nokeysArray = []
@@ -104,7 +104,7 @@ const diffChildren = function (dom, vChildren) {
       } else {
         for (let j = min; j < nokeysArray.length; j++) { // 没有key的情况下 优先寻找相同TagName的DOM类型
           let c = nokeysArray[j]
-          if (c && isSameNodeType(vChild, c)) {
+          if (c && isSameNodeType(vChild, c)) { // 因为是同级比较
             child = c
             nokeysArray[j] = null
 
@@ -115,6 +115,17 @@ const diffChildren = function (dom, vChildren) {
         }
       }
       child = diff(vChild, child)
+
+      const originDOM = domChildren[i]
+      if (child && child !== dom && child !== originDOM) {
+        if (!originDOM) { // 如果没有originDOM, child却是存在的, 说明修改后的DOM长度是大于修改前的, 转化后的DOM child不等于dom, 也不等于相同位置的子节点, child是新增的
+          dom.appendChild(child)
+        } else if (child === originDOM.nextSibling) { // 如果转化后的Child 和 之前的相同位置的DOM的下一个节点相同, 说明之前的那个节点被删除了
+          dom.removeChild(originDOM)
+        } else { // 如果没有以上两种情况, child又不等于相同位置的DOM, 那么将节点插入相同位置的前面
+          dom.insertBefore(child, originDOM)
+        }
+      }
     }
   }
 }
@@ -128,7 +139,15 @@ const diffMap = { // 策略模式
 
 const diff = function (vnode, dom) {
   const type = typeof vnode
-  return diffMap[type](vnode, dom) // 使用策略模式分发不同情况下的diff算法
+  if (Array.isArray(vnode)) {
+    vnode.forEach(vn => {
+      const type = typeof vn
+      console.log(dom)
+      diffMap[type](vn, dom)
+    })
+  } else {
+    return diffMap[type](vnode, dom) // 使用策略模式分发不同情况下的diff算法
+  }
 }
 
 export default diff

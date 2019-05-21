@@ -10,7 +10,8 @@ class App extends Component {
     // console.log('componentWillMount')
     this.state = {
       a: 1,
-      text: '文字'
+      text: '文字',
+      array: [{text: 1}]
     }
   }
   // componentDidMount() {
@@ -26,7 +27,8 @@ class App extends Component {
     this.setState(state => {
       return {
         a: ++state.a,
-        text: '文字2'
+        text: '文字2',
+        array: [...state.array, {text: 1}]
       }
     })
   }
@@ -36,7 +38,8 @@ class App extends Component {
       <AppChild /> */}
       {this.state.text}
       <button onClick={this.handleOnClick.bind(this)}>{this.state.a}</button>
-      {/* {this.state.a > 2 ? <div>1</div> : <div>123</div>} */}
+      {this.state.a > 2 ? <div>1</div> : <div>123</div>}
+      {this.state.array.map(_ => <div>{_.text}</div>)}
       <div key="child">{this.state.a}</div>
     </div>
   }
