@@ -6,6 +6,11 @@
 - [ReactDOM](https://github.com/Gloomysunday28/m-react-simlar/blob/master/ReactDOM/index.js)
 - [render](https://github.com/Gloomysunday28/m-react-simlar/blob/master/ReactDOM/render.js)
 
+
+
+
+
+
 - [x] JSX和虚拟DOM :wink:
 - [x] 生命周期和render :wink:
 - [ ] diff算法 :cry:
