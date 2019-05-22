@@ -5,6 +5,8 @@
  * @return {HTMLELement} 修改后的真实DOM
  */
 
+import {diffComponent} from './ComponentDiff'
+
 const noRenderOption = [false, null, undefined]
 
 const isSameNodeType = function (vnode, dom) {
@@ -15,6 +17,8 @@ const isSameNodeType = function (vnode, dom) {
   if (typeof vnode.tag === 'string') {
     return dom.nodeName.toLowerCase() === vnode.tag.toLowerCase();
   }
+
+  return dom && dom._component && dom._component.constructor === vnode.tag // 获取相同的组件
 }
 
 const diffTextNode = function (vnode, dom) { // 比对文本节点
@@ -38,12 +42,12 @@ const diffTextNode = function (vnode, dom) { // 比对文本节点
 }
 
 const diffElementNode = function (vnode, dom) { // 比对Element
+  if (typeof vnode.tag === 'function') {
+    return diffComponent(vnode, dom)
+  }
   let out = dom
   const childNodes = [...Array.from(dom.childNodes)] // 转化类数组为数组
   const tagName = dom.tagName.toLowerCase()
-  if (typeof vnode.tag === 'function') {
-    return
-  }
   if (vnode.tag === tagName) {
     diffAttribute(vnode.attrs, dom)
   } else if (!dom || vnode.tag.toLowerCase() !== tagName) {
@@ -60,7 +64,7 @@ const diffElementNode = function (vnode, dom) { // 比对Element
   }
 
   if (vnode.children) {
-    diffChildren(dom, vnode.children)
+    diffChildren(out, vnode.children)
   }
 
   return out
@@ -92,7 +96,7 @@ const diffChildren = function (dom, vChildren) { // 比对子节点
   let keys = {} // 区分有key和没有key的DOM
   let nokeysArray = []
 
-  domChildren.forEach(domC => {
+  domChildren.forEach(domC => { // 区分key和非key的子节点
     if (typeof domC === 'object' && domC.nodeType === 1 && domC.getAttribute('key')) {
       keys[domC.getAttribute('key')] = domC
     } else {
@@ -135,7 +139,7 @@ const diffChildren = function (dom, vChildren) { // 比对子节点
           dom.insertBefore(child, originDOM)
         }
       }
-      
+
       const newDomChildren = Array.from(dom.childNodes)
       if (domChildren.length < newDomChildren.length) {
         const newFilterDOM = newDomChildren.slice(0, newDomChildren.length - domChildren.length)
@@ -153,7 +157,6 @@ const diffMap = new Map([ // 策略模式
 ])
 
 const diff = function (vnode, dom) {
-  console.log(vnode)
   const type = typeof vnode
   if (Array.isArray(vnode)) {
     vnode.forEach(vn => {

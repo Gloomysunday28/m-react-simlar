@@ -82,8 +82,8 @@ function createComponent(component, props) { // 创建非JSX的class 或者 无�
   } else {
     inst = new Component(props)
     inst.constructor = component
-    inst.render = function() {
-      return this.constructor(props)
+    inst.render = function(prop = props) {
+      return this.constructor(prop)
     }
   }
   return inst // 为什么不返回render出来的JSX呢, 因为每次修改后都需要重新渲染, 也就是重新执行render函数
@@ -95,7 +95,6 @@ function setComponentProps(component, props) { // 设置props
   } else if (component.componentWillReceiveProps) {
     component.componentWillReceiveProps(props)
   }
- 
   component.props = props
 
   renderComponent(component)
@@ -107,7 +106,7 @@ function renderComponent(component) {
     component.componentWillUpdate()
   }
   if (component.base) {
-    base = diff(component.render(), component.base) // 进行同级DOM对比, 因为很少出现跨级DOM更改
+    base = diff(component.render(component.props), component.base) // 进行同级DOM对比, 因为很少出现跨级DOM更改
   } else {
     base = _render(component.render()) // 转化后的真实DOM, 子组件的props也会跟着state的值更改掉, 因为里面又重新执行了子组件的setComponentProps
   }
@@ -121,6 +120,6 @@ function renderComponent(component) {
   base._component = component
 }
 
-export {renderComponent}
+export {createComponent, renderComponent, setComponentProps}
 
 export default render

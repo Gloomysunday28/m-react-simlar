@@ -25,6 +25,7 @@ class AppChild extends Component {
   }
   render() {
     return <div>
+      {this.props.name}
       <button onClick={this.handleOnClick.bind(this)}>{this.state.b}</button>
     </div>
   }
