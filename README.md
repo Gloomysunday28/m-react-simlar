@@ -72,3 +72,10 @@ insertBefore | 参数(newNode, oldNode), 将newNode插在oldNode前面
           1. 当原子节点是这样的 div1 -> div2 -> div3 -> div4, 新DOM列表是 div3 -> div4, 那么div3与div1进行对比后, div3插入到div1之前就是第一个, 紧接着div4插入到div2之前(由于div1到div4是没有消除的, 所以后面会有清除动作)
           2. 当原子节点是这样的 div1 -> div2 -> div3 -> div4, 新DOM列表是 div0 -> div1 -> div2 -> div3 -> div4, 那么div0与div1对比后, 插入到div1之前
 ```
+
+>>> - 组件
+```
+  1. 如果新的组件和旧的组件相同, 那么更新旧的组件
+  2. 如果新的组件和旧的组件不同, 注销原组件并创建新组件
+  
+```
