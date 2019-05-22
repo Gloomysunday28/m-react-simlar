@@ -8,13 +8,15 @@
 
 - [Diff算法](https://github.com/Gloomysunday28/m-react-simlar/blob/master/Diff/Diff.js)
 
+- [异步SetState](https://github.com/Gloomysunday28/m-react-simlar/blob/master/SetState/index.js)
+
 
 
 ## 任务列表
 - [x] JSX和虚拟DOM :wink:
 - [x] 生命周期和render :wink:
 - [x] diff算法 :wink:
-- [ ] 异步的setState :cry:
+- [x] 异步的setState :wink:
 
 ## JSX loader解析
 类型 | 解析
@@ -77,4 +79,10 @@ insertBefore | 参数(newNode, oldNode), 将newNode插在oldNode前面
 ```
   1. 如果新的组件和旧的组件相同, 那么更新旧的组件
   2. 如果新的组件和旧的组件不同, 注销原组件并创建新组件
+```
+
+## SetState
+```
+  1. 合并一段时间内提交的setState -- 设置队列
+  2. 延迟更新 -- 参考EventLoop
 ```

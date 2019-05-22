@@ -16,6 +16,18 @@ class App extends Component {
       text: '文字3',
       array: [{text: 1}]
     }
+    for ( let i = 0; i < 100; i++ ) {
+      // this.setState(prevState => {
+      //   // console.log(this.state.a)
+      //   return {
+      //     a: ++prevState.a
+      //   }
+      // })
+      this.setState({
+        a: i
+      })
+      console.log(this.state.a)
+    }
   }
   // componentDidMount() {
   //   console.log('componentDidMount')
