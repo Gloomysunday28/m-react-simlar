@@ -65,5 +65,8 @@ insertBefore | 参数(newNode, oldNode), 将newNode插在oldNode前面
     4. 重新生成的DOM与原子节点的集合相对应下标的值进行对比
       1. 如果新DOM不等于原子节点对应下标的DOM相同, 并且原有对应下标的DOM不存在, 那么说明新DOM是新添加的, 则appendChild
       2. 如果新DOM与原子节点对应下标的相邻的下一个节点相同的话, 那么说明该DOM已被删除, 则删除原有的DOM
-      3. 
+      3. 如果新DOM与原子节点不等, 也没有以上两种情况, 那么将新节点插入到原子节点前面
+        原因:
+          1. 当原子节点是这样的 div1 -> div2 -> div3 -> div4, 新DOM列表是 div3 -> div4, 那么div3与div1进行对比后, div3插入到div1之前就是第一个, 紧接着div4插入到div2之前(由于div1到div4是没有消除的, 所以后面会有清除动作)
+          2. 当原子节点是这样的 div1 -> div2 -> div3 -> div4, 新DOM列表是 div0 -> div1 -> div2 -> div3 -> div4, 那么div0与div1对比后, 插入到div1之前
 ```

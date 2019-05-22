@@ -5,6 +5,8 @@
  * @return {HTMLELement} 修改后的真实DOM
  */
 
+const noRenderOption = [false, null, undefined]
+
 const isSameNodeType = function (vnode, dom) {
   if (typeof vnode === 'string' || typeof vnode === 'number') {
     return dom.nodeType === 3;
@@ -16,13 +18,19 @@ const isSameNodeType = function (vnode, dom) {
 }
 
 const diffTextNode = function (vnode, dom) { // 比对文本节点
+  if (noRenderOption.includes(vnode)) {
+    vnode = ''
+  }
+
   if (dom && dom.nodeType === 3) { // 如果原来文本节点
     if (dom.textContent !== vnode) {
       dom.textContent = vnode
     }
   } else { // 如果原来不是文本节点
     const text = document.createTextNode(vnode)
-    dom.parentNode.replaceChild(text, dom) // 替换掉原来的DOM
+    if (dom && dom.parentNode) {
+      dom.parentNode.replaceChild(text, dom) // 替换掉原来的DOM
+    }
     return text
   }
 
@@ -102,7 +110,7 @@ const diffChildren = function (dom, vChildren) { // 比对子节点
       if (keys[key]) { // 拿到key所对应的的虚拟DOM
         child = keys[key]
         keys[key] = null
-      } else {
+      } else if (min < childrenLen) {
         for (let j = min; j < nokeysArray.length; j++) { // 没有key的情况下 优先寻找相同TagName的DOM类型
           let c = nokeysArray[j]
           if (c && isSameNodeType(vChild, c)) { // 因为是同级比较
@@ -115,7 +123,7 @@ const diffChildren = function (dom, vChildren) { // 比对子节点
           }
         }
       }
-      child = diff(vChild, child)
+      child = diff(vChild, child) // 对比找出的子节点和虚拟DOM
 
       const originDOM = domChildren[i]
       if (child && child !== dom && child !== originDOM) {
@@ -127,27 +135,42 @@ const diffChildren = function (dom, vChildren) { // 比对子节点
           dom.insertBefore(child, originDOM)
         }
       }
+      
+      const newDomChildren = Array.from(dom.childNodes)
+      if (domChildren.length < newDomChildren.length) {
+        const newFilterDOM = newDomChildren.slice(0, newDomChildren.length - domChildren.length)
+        dom.parentNode.innerHTML = '';
+        [...newFilterDOM].map(el => dom.parentNode.appendChild(el))
+      }
     }
   }
 }
 
 
-const diffMap = { // 策略模式
-  string: diffTextNode,
-  number: diffTextNode,
-  object: diffElementNode
-}
+const diffMap = new Map([ // 策略模式
+  [/(boolean|string|number)/, diffTextNode],
+  [/object/, diffElementNode]
+])
 
 const diff = function (vnode, dom) {
+  console.log(vnode)
   const type = typeof vnode
   if (Array.isArray(vnode)) {
     vnode.forEach(vn => {
       const type = typeof vn
-      console.log(dom)
-      diffMap[type](vn, dom)
+      for (let diffType of diffMap) {
+        if (diffType[0].test(type)) {
+          diffType[1](vnode, dom) // 使用策略模式分发不同情况下的diff算法
+          break
+        }
+      }
     })
   } else {
-    return diffMap[type](vnode, dom) // 使用策略模式分发不同情况下的diff算法
+    for (let diffType of diffMap) {
+      if (diffType[0].test(type)) {
+        return diffType[1](vnode, dom) // 使用策略模式分发不同情况下的diff算法
+      }
+    }
   }
 }
 

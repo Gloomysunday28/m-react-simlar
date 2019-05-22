@@ -3,21 +3,17 @@ import diff from '../Diff/Diff'
 
 const render = function (virtual, container) { // 只做appendChild操作
   let renderDOM = _render(virtual)
-  console.log(renderDOM)
   if (renderDOM) {
     if (Array.isArray(renderDOM)) {
-      console.log(renderDOM);
-      // renderDOM.map(container.appendChild)
     } else {
       container.appendChild(renderDOM)
     }
-    // [...renderDOM].map(container.appendChild)
   }
   return container
 }
 
-const _render = function(virtual) { // 用来处理各种转化真实DOM\
-  if (!virtual) return
+const _render = function(virtual) { // 用来处理各种转化真实DOM
+  if (!virtual) virtual = ''
   if (typeof virtual === 'number') virtual = String(virtual)
   if (typeof virtual === 'string') {
     const virtualStr = document.createTextNode(virtual)
@@ -111,7 +107,6 @@ function renderComponent(component) {
     component.componentWillUpdate()
   }
   if (component.base) {
-    console.log(component.base)
     base = diff(component.render(), component.base) // 进行同级DOM对比, 因为很少出现跨级DOM更改
   } else {
     base = _render(component.render()) // 转化后的真实DOM, 子组件的props也会跟着state的值更改掉, 因为里面又重新执行了子组件的setComponentProps

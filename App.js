@@ -10,7 +10,7 @@ class App extends Component {
     // console.log('componentWillMount')
     this.state = {
       a: 1,
-      text: '文字',
+      text: '文字3',
       array: [{text: 1}]
     }
   }
@@ -36,7 +36,7 @@ class App extends Component {
     return <div className="c-hearder" id="11" style="color: red;" htmlFor="123">
       {/* <Header name={this.state.a}/>
       <AppChild /> */}
-      {this.state.text}
+      {this.state.a > 2 && this.state.text}
       <button onClick={this.handleOnClick.bind(this)}>{this.state.a}</button>
       {this.state.a > 2 ? <div>1</div> : <div>123</div>}
       {/* {this.state.array.map(_ => <div>{_.text}</div>)} */}
