@@ -39,7 +39,7 @@ class App extends Component {
       {this.state.text}
       <button onClick={this.handleOnClick.bind(this)}>{this.state.a}</button>
       {this.state.a > 2 ? <div>1</div> : <div>123</div>}
-      {this.state.array.map(_ => <div>{_.text}</div>)}
+      {/* {this.state.array.map(_ => <div>{_.text}</div>)} */}
       <div key="child">{this.state.a}</div>
     </div>
   }

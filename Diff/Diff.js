@@ -30,7 +30,7 @@ const diffTextNode = function (vnode, dom) { // 比对文本节点
 }
 
 const diffElementNode = function (vnode, dom) { // 比对Element
-  console.log(dom)
+  let out = dom
   const childNodes = [...Array.from(dom.childNodes)] // 转化类数组为数组
   const tagName = dom.tagName.toLowerCase()
   if (typeof vnode.tag === 'function') {
@@ -38,9 +38,6 @@ const diffElementNode = function (vnode, dom) { // 比对Element
   }
   if (vnode.tag === tagName) {
     diffAttribute(vnode.attrs, dom)
-    if (vnode.children) {
-      diffChildren(dom, vnode.children)
-    }
   } else if (!dom || vnode.tag.toLowerCase() !== tagName) {
     const tag = document.createElement(vnode.tag)
     const fragement = document.createDocumentFragment()
@@ -51,10 +48,14 @@ const diffElementNode = function (vnode, dom) { // 比对Element
     if (dom.parentNode) {
       dom.parentNode.replaceChild(tag, dom)
     }
-    return tag
+    out = tag
   }
 
-  return dom
+  if (vnode.children) {
+    diffChildren(dom, vnode.children)
+  }
+
+  return out
 }
 
 const diffAttribute = function (attrs = {}, dom) { // attrs是修改后的, Dom是修改前的
